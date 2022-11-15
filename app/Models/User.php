@@ -48,4 +48,11 @@ class User extends Authenticatable
         public function comments(){
             return $this->hasMany(comments::class);
         }
+
+            //relation one to many avec la table payement
+
+            public function payement(){
+                return $this->hasMany(payement::class);
+            }
+
 }

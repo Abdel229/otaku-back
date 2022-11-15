@@ -15,4 +15,10 @@ class event extends Model
     public function event_categories(){
         return $this->belongsToMany(event_categorie::class);
     }
+
+             //relation one to many avec la table payement
+
+             public function payement(){
+        return $this->hasMany(payement::class);
+            }
 }
