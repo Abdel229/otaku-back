@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 
 class userController extends Controller
@@ -22,7 +24,8 @@ class userController extends Controller
             'name'=>'required|max:255|string',
             'pseudo'=>'required|max:255|string',
             'email'=>'string|required|unique:users',
-            'password'=>'required|min:8|confirmed'
+            'password'=>'required|min:8|confirmed',
+            'role'=>'integer'
         ]);
         $image=$Request->image;
         //verify if the image has a good extension
@@ -32,12 +35,12 @@ class userController extends Controller
             'jpg'
         ];
 
-        if(!in_array($image->getClientOriginalName(),$extension)){
+        if(!in_array($image->getClientOriginalExtension(),$extension)){
             return response()->json([
                 'status'=>True,
                 'Message'=>'Vous devez télécharger une image',
             ],200);
-        }
+        // }
         //create name of image
         $filename=$image->hashName();
         //create path of image
@@ -52,6 +55,7 @@ class userController extends Controller
             'email'=>$validate['email'],
             'image'=>$path,
             'password'=>bcrypt($validate['password']),
+            'role'=>$validate['role']
         ]);
                 //création d'une clé
                 $token=$user->createToken('auth_token')->plainTextToken;
@@ -63,7 +67,7 @@ class userController extends Controller
                     'access_token'=>$token
                 ],201);
     }
-
+    }
        /**
      * URL:127.0.0.1:8000/api/login
      * @var array
