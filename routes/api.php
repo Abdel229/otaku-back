@@ -19,9 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test',function(){
-    $payement=User::find(1);
-    return response()->json([
-        'res'=>$payement->payementable
-    ]);
-});
+
