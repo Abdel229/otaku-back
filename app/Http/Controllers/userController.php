@@ -24,11 +24,33 @@ class userController extends Controller
             'email'=>'string|required|unique:users',
             'password'=>'required|min:8|confirmed'
         ]);
+        $image=$Request->image;
+        //verify if the image has a good extension
+        $extension=[
+            'png',
+            'jpeg',
+            'jpg'
+        ];
 
+        if(!in_array($image->getClientOriginalName(),$extension)){
+            return response()->json([
+                'status'=>True,
+                'Message'=>'Vous devez télécharger une image',
+            ],200);
+        }
+        //create name of image
+        $filename=$image->hashName();
+        //create path of image
+        $path=$Request->file('image')->storeAs(
+            'avatars',
+            $filename,
+            'public'
+        );
         $user=User::create([
             'name'=>$validate['name'],
             'pseudo'=>$validate['pseudo'],
             'email'=>$validate['email'],
+            'image'=>$path,
             'password'=>bcrypt($validate['password']),
         ]);
                 //création d'une clé
