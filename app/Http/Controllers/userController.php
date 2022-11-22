@@ -11,6 +11,7 @@ class userController extends Controller
 {
 
     /**
+     * POST
      * URL:127.0.0.1:8000/api/register
      * @var array
      * Enregistre un utilisateur

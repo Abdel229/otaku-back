@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\userController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,9 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test',function(){
-    $payement=User::find(1);
-    return response()->json([
-        'res'=>$payement->payementable
-    ]);
-});
+//user registration
+Route::Post('register',[userController::class,'register']);
+//user Login
+Route::Post('login',[userController::class,'login']);
+//user Logout
+Route::Post('log-out',[userController::class,'logOut']);
+
