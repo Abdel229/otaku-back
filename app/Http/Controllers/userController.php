@@ -35,12 +35,12 @@ class userController extends Controller
             'jpg'
         ];
 
-        if(!in_array($image->getClientOriginalExtension(),$extension)){
+        if(!in_array($image->extension(),$extension)){
             return response()->json([
                 'status'=>True,
                 'Message'=>'Vous devez télécharger une image',
-            ],200);
-        // }
+            ],201);
+        }
         //create name of image
         $filename=$image->hashName();
         //create path of image
@@ -67,7 +67,7 @@ class userController extends Controller
                     'access_token'=>$token
                 ],201);
     }
-    }
+
        /**
      * URL:127.0.0.1:8000/api/login
      * @var array
