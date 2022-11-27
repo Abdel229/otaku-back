@@ -14,7 +14,12 @@ class PostCategorieController extends Controller
      */
     public function index()
     {
-        //
+        $categories=post_categorie::all();
+        return response()->json([
+            'status'=>'succes',
+            'categories'=>$categories,
+            'message'=>'categories récupéré avec succès'
+        ]);
     }
 
     /**
@@ -25,7 +30,18 @@ class PostCategorieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate=$request->validate([
+            'content'=>'string|required'
+        ]);
+
+        $post=post_categorie::create([
+            'content'=>$validate['content']
+        ]);
+
+        return response()->json([
+            'status'=>'succes',
+            'message'=>'poste créer avec succès'
+        ]);
     }
 
     /**
@@ -36,7 +52,11 @@ class PostCategorieController extends Controller
      */
     public function show(post_categorie $post_categorie)
     {
-        //
+        $categorie=post_categorie::find($post_categorie)->getFirst();
+        return response()->json([
+            'status'=>'succes',
+            'categorie'=>$categorie
+        ]);
     }
 
     /**
@@ -48,7 +68,20 @@ class PostCategorieController extends Controller
      */
     public function update(Request $request, post_categorie $post_categorie)
     {
-        //
+        $categorie=post_categorie::find($post_categorie)->getFirst();
+
+        //vérification des données
+        $validate=$request->validate([
+            'content'=>'string|required'
+        ]);
+        // insertion des données
+        $categorie::update([
+            'content'=>$validate['content']
+        ]);
+        return response()->json([
+            'status'=>'succes',
+            'message'=>'mise à jour réussi'
+        ]);
     }
 
     /**
@@ -59,6 +92,11 @@ class PostCategorieController extends Controller
      */
     public function destroy(post_categorie $post_categorie)
     {
-        //
+        $categorie=post_categorie::find($post_categorie)->getFirst();
+        $categorie->delete();
+        return response()->json([
+            'status' => 'success',
+            'message'=>'suppression des messages réussi'
+        ]);
     }
 }

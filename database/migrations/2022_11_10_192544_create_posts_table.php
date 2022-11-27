@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->longText('content');
-
+            $table->integer('categorie_id');
             $table->timestamps();
         });
     }

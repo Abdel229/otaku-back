@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->integer('role')->defalut(0);
+            $table->integer('role')->default(0);
         });
     }
 

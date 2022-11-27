@@ -27,36 +27,69 @@ class userController extends Controller
             'password'=>'required|min:8|confirmed',
             'role'=>'integer'
         ]);
-        $image=$Request->image;
-        //verify if the image has a good extension
-        $extension=[
-            'png',
-            'jpeg',
-            'jpg'
-        ];
+        //si l'image a été upload
+        if(isset($Request->image)){
+            $image=$Request->image;
+            //verify if the image has a good extension
+            $extension=[
+                'png',
+                'jpeg',
+                'jpg'
+            ];
+            if(!in_array($image->extension(),$extension)){
+                return response()->json([
+                    'status'=>True,
+                    'Message'=>'Vous devez télécharger une image',
+                ],201);
+            }
+            //create name of image
+            $filename=$image->hashName();
+            //create path of image
+            $path=$Request->file('image')->storeAs(
+                'avatars',
+                $filename,
+                'public'
+            );
 
-        if(!in_array($image->extension(),$extension)){
-            return response()->json([
-                'status'=>True,
-                'Message'=>'Vous devez télécharger une image',
-            ],201);
+            //si le role est défini
+            if(isset($Request->role)){
+                $user=User::create([
+                    'name'=>$validate['name'],
+                    'pseudo'=>$validate['pseudo'],
+                    'email'=>$validate['email'],
+                    'image'=>$path,
+                    'password'=>bcrypt($validate['password']),
+                    'role'=>$validate['role']
+                ]);
+            }
+            else{
+                $user=User::create([
+                    'name'=>$validate['name'],
+                    'pseudo'=>$validate['pseudo'],
+                    'email'=>$validate['email'],
+                    'image'=>$path,
+                    'password'=>bcrypt($validate['password'])
+                ]);
+            }
+        }else{
+            // integration des données si l'image n'a pas été upload et que le role est défini
+            if(isset($Request->role))
+            {$user=User::create([
+                'name'=>$validate['name'],
+                'pseudo'=>$validate['pseudo'],
+                'email'=>$validate['email'],
+                'password'=>bcrypt($validate['password']),
+                'role'=>$validate['role']
+            ]);}
+            else{
+                $user=User::create([
+                    'name'=>$validate['name'],
+                    'pseudo'=>$validate['pseudo'],
+                    'email'=>$validate['email'],
+                    'password'=>bcrypt($validate['password'])
+                ]);
+            }
         }
-        //create name of image
-        $filename=$image->hashName();
-        //create path of image
-        $path=$Request->file('image')->storeAs(
-            'avatars',
-            $filename,
-            'public'
-        );
-        $user=User::create([
-            'name'=>$validate['name'],
-            'pseudo'=>$validate['pseudo'],
-            'email'=>$validate['email'],
-            'image'=>$path,
-            'password'=>bcrypt($validate['password']),
-            'role'=>$validate['role']
-        ]);
                 //création d'une clé
                 $token=$user->createToken('auth_token')->plainTextToken;
 
@@ -77,8 +110,7 @@ class userController extends Controller
 
     public function login(Request $Request){
         $validate=$Request->validate([
-            'name'=>'required|max:255|string',
-            'email'=>'string|required|unique:users',
+            'email'=>'string|required',
             'password'=>'required|min:8'
         ]);
 
@@ -88,15 +120,16 @@ class userController extends Controller
             return response()->json([
                 'statuts'=>False,
                 'message'=>'Information incompatible'
-            ]);
+            ],203);
         }
 
-        $user->createToken('auth_token')->plainTextToken;
+        $token=$user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'status'=>True,
-            'message'=>'Connexion réussi'
-        ]);
+            'message'=>'Connexion réussi',
+            'acces_token'=>$token
+        ],200);
      }
 
 
@@ -112,6 +145,29 @@ class userController extends Controller
         return response()->json([
             'statut'=>True,
             'message'=>'Déconnexion réussi'
+        ]);
+     }
+
+         /**
+     * URL:127.0.0.1:8000/api/delete
+     * @var array
+     * Supprime un utilisateur
+     * @return string
+     */
+
+     public function delete(User $user){
+        $theUser=User::find($user)->getFirst();
+        // si le token de l'utilisateur existe, suppression avant suppression du user
+        if(empty($theUser->user()->tokens())){
+            $theUser->user()->tokens()->delete();
+        }
+
+        //suppression de l'utilisateur
+        $theUser->delete();
+        return response()->json([
+
+            'statut'=>True,
+            'message'=>'suppression de l\'utilsiateur réussi'
         ]);
      }
 
