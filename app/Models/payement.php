@@ -18,4 +18,9 @@ class payement extends Model
    public function event(){
     return $this->belongsTo(event::class);
    }
+
+   //relation morph to many
+   public function payementable(){
+    return $this->morphTo();
+   }
 }
