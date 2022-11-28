@@ -13,16 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('payements', function (Blueprint $table) {
+        Schema::create('tournois', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                  ->constrained()
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
-            $table->integer('id_transaction');
-            $table->integer('Montant');
-            $table->integer('payementable_id');
-            $table->string('payementable_type');
+            $table->string('name');
+            $table->string('content');
+            $table->date('Date');
+            $table->integer('Price');
             $table->timestamps();
         });
     }
@@ -34,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payements');
+        Schema::dropIfExists('tournois');
     }
 };
