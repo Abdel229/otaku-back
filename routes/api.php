@@ -18,39 +18,53 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
+/************************USER*****************************/
+//Avoir des info sur l'utilisateur
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 //user registration
-Route::Post('register',[userController::class,'register']);
+Route::Post('register', [userController::class, 'register']);
 //user Login
-Route::Post('login',[userController::class,'login']);
+Route::Post('login', [userController::class, 'login']);
 //user Logout
-Route::Post('log-out',[userController::class,'logOut']);
+Route::Post('log-out', [userController::class, 'logOut']);
 //user delete
-Route::Post('delete',[userController::class,'delete']);
+Route::Post('delete', [userController::class, 'delete']);
 
+
+/************************Poste*****************************/
+// Uniquement pour administrateur
+Route::middleware(['auth:sanctum', 'is.admin'])->group(function () {
+    //create post
+    Route::Post('post/store', [PostController::class, 'store']);
+    //update post
+    Route::Post('post/update{post}', [PostController::class, 'update']);
+    //destroy post
+    Route::Post('post/show/{post}', [PostController::class, 'destroy']);
+});
 
 //get allpost
-Route::get('/post/index',[PostController::class,'index']);
-//create post
-Route::Post('post/store',[PostController::class,'store']);
+Route::get('/post/index', [PostController::class, 'index']);
+
 //show first post
-Route::Post('post/show/{post}',[PostController::class,'show']);
-//update post
-Route::Post('post/update{post}',[PostController::class,'update']);
-//destroy post
-Route::Post('post/show/{post}',[PostController::class,'destroy']);
+Route::Post('post/show/{post}', [PostController::class, 'show']);
 
 
+
+/************************Categorie*****************************/
+Route::middleware(['auth:sactum', 'is.admin'])->group(function () {
+    //create category
+    Route::Post('category/store', [PostCategorieController::class, 'store']);
+    //update category
+    Route::Post('category/update/{post_categorie}', [PostCategorieController::class, 'update']);
+    //destroy category
+    Route::Post('category/destroy/{post_categorie}', [PostCategorieController::class, 'destroy']);
+});
 //get all categories
-Route::get('category/index',[PostCategorieController::class,'index']);
-//create category
-Route::Post('category/store',[PostCategorieController::class,'store']);
+Route::get('category/index', [PostCategorieController::class, 'index']);
+
 //show first category
-Route::Post('category/show/{post_categorie}',[PostCategorieController::class,'show']);
-//update category
-Route::Post('category/update/{post_categorie}',[PostCategorieController::class,'update']);
-//destroy category
-Route::Post('category/destroy/{post_categorie}',[PostCategorieController::class,'destroy']);
+Route::Post('category/show/{post_categorie}', [PostCategorieController::class, 'show']);
